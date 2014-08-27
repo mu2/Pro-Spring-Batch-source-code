@@ -73,4 +73,19 @@ public class Transaction {
     public String toString() {
         return "Sold " + quantity + " of " + ticker;
     }
+
+    public Transaction(long id, long accountId, String accountNumber, String ticker, long tickerId, long quantity, Date tradeTimestamp, BigDecimal dollarAmount, TransactionType type) {
+        this.id = id;
+        this.accountId = accountId;
+        this.accountNumber = accountNumber;
+        this.ticker = ticker;
+        this.tickerId = tickerId;
+        this.quantity = quantity;
+        this.tradeTimestamp = tradeTimestamp;
+        this.dollarAmount = dollarAmount;
+        this.type = type;
+    }
+
+    public Transaction() {
+    }
 }

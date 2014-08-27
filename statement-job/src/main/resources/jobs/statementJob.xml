@@ -14,7 +14,7 @@
 
 	<beans:bean id="idIncrementer" class="org.springframework.batch.core.launch.support.RunIdIncrementer"/>
 	
-	<beans:bean id="customerTransactionFile" class="org.springframework.core.io.FileSystemResource">
+	<!--<beans:bean id="customerTransactionFile" class="org.springframework.core.io.FileSystemResource">
 		<beans:constructor-arg value="/Users/mminella/temp/test.csv"/>
 	</beans:bean>
 	
@@ -198,36 +198,58 @@
                 <util:ref bean="cashBalanceUpdateWriter"/>
             </util:list>
         </beans:property>
-	</beans:bean>
+	</beans:bean>-->
 
-	<beans:bean id="customerReader"    
+<!--	<beans:bean id="customerReader"
 	                      class="org.springframework.batch.item.database.JdbcCursorItemReader">
 	    <beans:property name="dataSource" ref="dataSource"/>
 	    <beans:property name="sql" value="select a.id as account_id, a.accountNumber, a.cashBalance, a.tier, c.address1 as address, c.city, c.state, c.zip, c.id as customer_id, c.firstName, c.lastName from customer c left outer join account a on a.customer_id = c.id order by c.id"/>
 	    <beans:property name="rowMapper" ref="customerStatementRowMapper"/>
-	</beans:bean>
+	</beans:bean>-->
+
+    <beans:bean id="customerItemReader" class="org.springframework.batch.item.adapter.ItemReaderAdapter">
+        <beans:property name="targetObject" ref="customerBuilder"/>
+        <beans:property name="targetMethod" value="getCustomer"/>
+    </beans:bean>
+
+    <beans:bean id="customerBuilder" class="com.apress.springbatch.statement.reader.CustomerBuilder"/>
 		
+<!--
 	<beans:bean id="customerStatementRowMapper" class="com.apress.springbatch.statement.reader.CustomerStatementRowMapper"/>
+-->
 
 	<beans:bean id="customerStatementReader" class="com.apress.springbatch.statement.reader.CustomerStatementReader">
-		<beans:property name="customerReader" ref="customerReader"/>
-		<beans:property name="tickerDao" ref="tickerDao"/>
+		<beans:property name="customerReader" ref="customerItemReader"/>
+		<!--<beans:property name="tickerDao" ref="tickerDao"/>-->
 	</beans:bean>
 	
 	<beans:bean id="statementFiles" class="org.springframework.core.io.FileSystemResource">
 		<beans:constructor-arg value="/output/statement"/>
 	</beans:bean>
+
+    <beans:bean id="reportFile" class="org.springframework.core.io.FileSystemResource">
+        <beans:constructor-arg value="/output/report"/>
+    </beans:bean>
 	
 	<beans:bean id="statementSuffixGenerator" class="com.apress.springbatch.statement.writer.StatementSuffixGenerator"/>
 	
 	<beans:bean id="statementFormatter" class="com.apress.springbatch.statement.writer.StatementFormatter"/>
+    <beans:bean id="reportFormatter" class="com.apress.springbatch.statement.writer.ReportFormatter"/>
 
-	<beans:bean id="statementWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
-		<beans:property name="headerCallback">
-			<beans:bean class="com.apress.springbatch.statement.writer.StatementHeaderCallback"/>
-		</beans:property>
-		<beans:property name="lineAggregator" ref="statementFormatter"/>
-	</beans:bean>
+    <beans:bean id="reportWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+        <beans:property name="headerCallback">
+            <beans:bean class="com.apress.springbatch.statement.writer.StatementHeaderCallback"/>
+        </beans:property>
+        <beans:property name="resource" ref="reportFile"/>
+        <beans:property name="lineAggregator" ref="reportFormatter"/>
+    </beans:bean>
+
+    <beans:bean id="statementWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+    <beans:property name="headerCallback">
+        <beans:bean class="com.apress.springbatch.statement.writer.StatementHeaderCallback"/>
+    </beans:property>
+    <beans:property name="lineAggregator" ref="statementFormatter"/>
+</beans:bean>
 
 	<beans:bean id="statementsWriter" class="org.springframework.batch.item.file.MultiResourceItemWriter">
 		<beans:property name="resource" ref="statementFiles"/>
@@ -236,13 +258,13 @@
 		<beans:property name="delegate" ref="statementWriter"/>
 	</beans:bean>
 
-	<step id="importCustomerAndTransactionData">
+	<!--<step id="importCustomerAndTransactionData">
 		<tasklet>
 			<chunk reader="customerTransactionReader" processor="customerLookupItemProcessor" writer="customerTransactionItemWriter" commit-interval="100"/>
 		</tasklet>
-	</step>
+	</step>-->
 
-	<step id="retrieveStockPrices">
+	<!--<step id="retrieveStockPrices">
 		<tasklet>
 			<chunk reader="stockPriceWebServiceReader" writer="stockFileWriter" commit-interval="1"/>
 		</tasklet>
@@ -281,24 +303,24 @@
 
 	<beans:bean id="taskExecutor" class="org.springframework.core.task.SimpleAsyncTaskExecutor">
 		<beans:property name="concurrencyLimit" value="10"/>
-	</beans:bean>
+	</beans:bean>-->
 	
 	<step id="generateMonthlyStatements">
 		<tasklet>
-			<chunk reader="customerStatementReader" writer="statementsWriter" commit-interval="1">
-				<streams>
-					<stream ref="customerReader"/>
-				</streams>
+			<chunk reader="customerStatementReader" writer="reportWriter" commit-interval="1">
+				<!--<streams>
+					<stream ref="customerItemReader"/>
+				</streams>-->
 			</chunk>
 		</tasklet>
 	</step>
 	
-	<job id="statementJob" incrementer="idIncrementer">
-		<step id="step1" parent="importCustomerAndTransactionData" next="step2"/>
+	<job id="statementJob" incrementer="idIncrementer" restartable="true">
+		<!--<step id="step1" parent="importCustomerAndTransactionData" next="step2"/>
 		<step id="step2" parent="retrieveStockPrices" next="step3"/>
 		<step id="step3" parent="importStockPrices" next="step4"/>
 		<step id="step4" parent="calculateTiers" next="step5"/>
-		<step id="step5" parent="calculateTransactionFees" next="step6"/>
+		<step id="step5" parent="calculateTransactionFees" next="step6"/>-->
 		<step id="step6" parent="generateMonthlyStatements"/>
     </job>
 </beans:beans>

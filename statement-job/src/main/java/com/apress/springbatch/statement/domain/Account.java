@@ -48,4 +48,16 @@ public class Account {
     public void setAccountNumber(String accountNumber) {
         this.accountNumber = accountNumber;
     }
+
+    public Account(long id, String accountNumber, Customer cust, BigDecimal cashBalance, PricingTier tier, List<Transaction> transactions) {
+        this.id = id;
+        this.accountNumber = accountNumber;
+        this.cust = cust;
+        this.cashBalance = cashBalance;
+        this.tier = tier;
+        this.transactions = transactions;
+    }
+
+    public Account() {
+    }
 }

@@ -1,27 +1,24 @@
-package com.apress.springbatch.chapter7;
-
-import org.springframework.stereotype.Component;
+package com.apress.springbatch.chapter9;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@Component("customerBuilder")
-public class CustomerService {
-    
+public class CustomerBuilder {
+
     private List<Customer> customers;
     private int curIndex;
-    
+
     private String [] firstNames = {"Michael", "Warren", "Ann", "Terrence", "Erica", "Laura", "Warren", "Steve", "Larry", "Barack"};
     private String middleInitial = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private String [] lastNames = {"Minella", "Gates", "Darrow", "Donnelly", "Benes", "Jobs", "Buffett", "Ellison", "Obama"};
     private String [] streets = {"4th Street", "Wall Street", "Fifth Avenue", "Mt. Lee Drive", "Jeopardy Lane", "Infinite Loop Drive", "Farnam Street", "Isabella Ave", "S. Greenwood Ave"};
     private String [] cities = {"Chicago", "New York", "Hollywood", "Aurora", "Omaha", "Atherton"};
     private String [] states = {"IL", "NY", "CA", "NE"};
-    
+
     private Random generator = new Random();
 
-    public CustomerService() {
+    public CustomerBuilder() {
         curIndex = 0;
         
         customers = new ArrayList<Customer>();

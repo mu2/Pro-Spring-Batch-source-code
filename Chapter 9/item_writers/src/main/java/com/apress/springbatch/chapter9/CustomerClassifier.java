@@ -5,23 +5,22 @@ import org.springframework.batch.item.ItemWriter;
 
 public class CustomerClassifier implements Classifier<Customer, ItemWriter<Customer>> {
 
-    private ItemWriter<Customer> fileItemWriter;
-    private ItemWriter<Customer> jdbcItemWriter;
+    private ItemWriter<Customer> customerItemWriter;
+    private ItemWriter<Customer> prospectItemWriter;
 
-    @Override
     public ItemWriter<Customer> classify(Customer customer) {
         if(customer.getState().matches("^[A-M].*")) {
-            return fileItemWriter;
+            return customerItemWriter;
         } else {
-            return jdbcItemWriter;
+            return prospectItemWriter;
         }
     }
 
-    public void setFileItemWriter(ItemWriter<Customer> fileItemWriter) {
-        this.fileItemWriter = fileItemWriter;
+    public void setCustomerItemWriter(ItemWriter<Customer> customerItemWriter) {
+        this.customerItemWriter = customerItemWriter;
     }
 
-    public void setJdbcItemWriter(ItemWriter<Customer> jdbcItemWriter) {
-        this.jdbcItemWriter = jdbcItemWriter;
+    public void setProspectItemWriter(ItemWriter<Customer> prospectItemWriter) {
+        this.prospectItemWriter = prospectItemWriter;
     }
 }
