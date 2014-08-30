@@ -21,6 +21,7 @@ public class CustomerStatementReader implements ItemReader<Statement> {
     private ItemReader<Customer> customerReader;
     private TickerDao tickerDao;
     private Random generator = new Random();
+    private Statement statement = null;
 
     public Statement read() throws Exception, UnexpectedInputException,
             ParseException {
@@ -30,7 +31,7 @@ public class CustomerStatementReader implements ItemReader<Statement> {
         if(customer == null) {
             return null;
         } else {
-            Statement statement = new Statement();
+            statement = new Statement();
             
             statement.setCustomer(customer);
             statement.setSecurityTotal(new BigDecimal(generator.nextInt()));
@@ -61,5 +62,19 @@ public class CustomerStatementReader implements ItemReader<Statement> {
 
     public void setTickerDao(TickerDao tickerDao) {
         this.tickerDao = tickerDao;
+    }
+
+    public String getPairingCTFHeader() {
+        String header = "" ;
+        try {
+            statement = read() ;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (statement != null) {
+            header = "First Customer Name: " + statement.getCustomer().getFirstName();
+            header += "\nFirst Customer Account Number: " + statement.getCustomer().getAccount().getAccountNumber() + "\n";
+        }
+        return header ;
     }
 }

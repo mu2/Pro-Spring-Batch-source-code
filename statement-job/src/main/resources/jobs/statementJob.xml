@@ -238,7 +238,9 @@
 
     <beans:bean id="reportWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
         <beans:property name="headerCallback">
-            <beans:bean class="com.apress.springbatch.statement.writer.StatementHeaderCallback"/>
+            <beans:bean class="com.apress.springbatch.statement.writer.StatementHeaderCallback">
+                <beans:property name="header" value="#{customerStatementReader.PairingCTFHeader}"/>
+            </beans:bean>
         </beans:property>
         <beans:property name="resource" ref="reportFile"/>
         <beans:property name="lineAggregator" ref="reportFormatter"/>

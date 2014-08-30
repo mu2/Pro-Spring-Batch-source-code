@@ -29,7 +29,7 @@ public class Launcher {
 
         try {
 
-            JobExecution execution = jobLauncher.run(job, new JobParametersBuilder().addString("RunID","dd").toJobParameters());
+            JobExecution execution = jobLauncher.run(job, new JobParametersBuilder().addString("RunID","d433").toJobParameters());
             System.out.println("Exit Status : " + execution.getStatus());
 
         } catch (Exception e) {
